@@ -32,10 +32,7 @@ app.use(
 app.use(helmet());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://thunderous-kataifi-f18eec.netlify.app",
-    ],
+    origin: ["http://localhost:3000"],
     methods: ["GET", "PUT", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
     credentials: true,
