@@ -8,11 +8,17 @@ const {
 } = require("../utils");
 const Token = require("../models/Token");
 
+// @desc    Get all users
+// @route   GET /api/v1/users
+// @access  Private/Admin
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
   res.status(StatusCodes.OK).json({ users });
 };
 
+// @desc    Get a single user
+// @route   GET /api/v1/users/:id
+// @access  Private
 const getSingleUser = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id }).select("-password");
   if (!user) {
@@ -22,6 +28,9 @@ const getSingleUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 
+// @desc    Get current user
+// @route   GET /api/v1/users/showMe
+// @access  Private
 const showCurrentUser = async (req, res) => {
   const existingToken = await Token.findOne({ user: req.user.userId });
 
@@ -32,7 +41,9 @@ const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: req.user });
 };
 
-// update user with user.save()
+// @desc    Update current user's details
+// @route   PATCH /api/users/updateUser
+// @access  Private
 const updateUser = async (req, res) => {
   const { email, name } = req.body;
   if (!email || !name) {
@@ -49,6 +60,10 @@ const updateUser = async (req, res) => {
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
+
+// @desc    Update current user's password
+// @route   PATCH /api/users/updateUserPassword
+// @access  Private
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   if (!oldPassword || !newPassword) {

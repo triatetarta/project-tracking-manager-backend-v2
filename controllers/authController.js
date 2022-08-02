@@ -5,6 +5,9 @@ const CustomError = require("../errors");
 const { attachCookiesToResponse, createTokenUser } = require("../utils");
 const crypto = require("crypto");
 
+// @desc    Register a new user
+// @route   POST /api/v1/auth/register
+// @access  Public
 const register = async (req, res) => {
   const { email, name, password } = req.body;
 
@@ -23,6 +26,9 @@ const register = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
 };
 
+// @desc    Login a user
+// @route   POST /api/v1/auth/login
+// @access  Public
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -70,6 +76,9 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: tokenUser });
 };
 
+// @desc    Logout a user
+// @route   DELETE /api/v1/auth/logout
+// @access  Private
 const logout = async (req, res) => {
   await Token.findOneAndDelete({ user: req.user.userId });
 
@@ -81,7 +90,7 @@ const logout = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now()),
   });
-  res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+  res.status(StatusCodes.OK).json({ msg: "User logged out!" });
 };
 
 module.exports = {

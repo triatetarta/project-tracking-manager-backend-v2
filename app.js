@@ -17,6 +17,8 @@ const connectDB = require("./db/connect");
 
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
+const ticketRouter = require("./routes/ticketRoutes");
+const commentRouter = require("./routes/commentRoutes");
 
 // middleware
 const notFoundMiddleware = require("./middleware/not-found");
@@ -30,16 +32,16 @@ app.use(
   })
 );
 app.use(helmet());
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    methods: ["GET", "PUT", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
-    credentials: true,
-    maxAge: 600,
-    exposedHeaders: ["*", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET", "PUT", "POST", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+//     credentials: true,
+//     maxAge: 600,
+//     exposedHeaders: ["*", "Authorization"],
+//   })
+// );
 app.use(xss());
 app.use(mongoSanitize());
 
@@ -50,6 +52,8 @@ app.use(fileUpload());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/tickets", ticketRouter);
+app.use("/api/v1/comments", commentRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
