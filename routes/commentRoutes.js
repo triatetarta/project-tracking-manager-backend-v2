@@ -4,16 +4,12 @@ const { authenticateUser } = require("../middleware/authentication");
 
 const {
   createComment,
-  getAllComments,
   getSingleComment,
   updateComment,
   deleteComment,
 } = require("../controllers/commentController");
 
-router
-  .route("/")
-  .post(authenticateUser, createComment)
-  .get(authenticateUser, getAllComments);
+router.route("/").post(authenticateUser, createComment);
 
 router
   .route("/:id")

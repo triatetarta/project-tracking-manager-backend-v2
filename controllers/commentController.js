@@ -24,18 +24,6 @@ const createComment = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ comment });
 };
 
-// @desc    Get ticket comments
-// @route   GET /api/v1/comments
-// @access  Private
-const getAllComments = async (req, res) => {
-  const comments = await Comment.find({}).populate({
-    path: "ticket",
-    select: "name company price",
-  });
-
-  res.status(StatusCodes.OK).json({ comments, count: comments.length });
-};
-
 // @desc    Get single comment
 // @route   GET /api/v1/comments/:id
 // @access  Private
@@ -89,7 +77,9 @@ const deleteComment = async (req, res) => {
 
   await comment.remove();
 
-  res.status(StatusCodes.OK).json({ msg: "Success! Comment removed" });
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Success! Comment removed", id: commentId });
 };
 
 // @desc    Get single ticket comments
@@ -105,7 +95,6 @@ const getSingleTicketComments = async (req, res) => {
 
 module.exports = {
   createComment,
-  getAllComments,
   getSingleComment,
   updateComment,
   deleteComment,
