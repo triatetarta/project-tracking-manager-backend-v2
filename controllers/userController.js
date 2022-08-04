@@ -45,14 +45,20 @@ const showCurrentUser = async (req, res) => {
 // @route   PATCH /api/users/updateUser
 // @access  Private
 const updateUser = async (req, res) => {
-  const { email, name } = req.body;
-  if (!email || !name) {
-    throw new CustomError.BadRequestError("Please provide all values");
-  }
+  const { email, name, jobTitle, team, department, location } = req.body;
+
   const user = await User.findOne({ _id: req.user.userId });
+
+  if (!user) {
+    throw new CustomError.UnauthorizedError("User doesn't exist");
+  }
 
   user.email = email;
   user.name = name;
+  user.jobTitle = jobTitle;
+  user.team = team;
+  user.department = department;
+  user.location = location;
 
   await user.save();
 
