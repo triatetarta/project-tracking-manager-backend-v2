@@ -8,6 +8,7 @@ const createTokenUser = (user) => {
     team: user.team,
     department: user.department,
     location: user.location,
+    image: user.image,
   };
 };
 

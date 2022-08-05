@@ -7,6 +7,7 @@ const {
   checkPermissions,
 } = require("../utils");
 const Token = require("../models/Token");
+const cloudinary = require("../utils/cloudinary");
 
 // @desc    Get all users
 // @route   GET /api/v1/users
@@ -87,10 +88,89 @@ const updateUserPassword = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Success! Password Updated." });
 };
 
+// @desc    Update current user's profile pic
+// @route   PATCH /api/users/uploadImage
+// @access  Private
+const uploadImage = async (req, res) => {
+  const { image } = req.body;
+
+  if (!image) {
+    throw new CustomError.BadRequestError("Please select an image");
+  }
+
+  const user = await User.findById(req.user.userId);
+
+  if (!user) {
+    throw new CustomError.NotFoundError(`No user with id : ${req.user.userId}`);
+  }
+
+  let updatedUser;
+
+  if (user.image !== "") {
+    await cloudinary.uploader.destroy(user.image, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+
+      console.log("Image has been removed from cloudinary");
+    });
+
+    const uploadedImage = await cloudinary.uploader.upload(
+      image,
+      {
+        upload_preset: "unsigned_upload",
+        allowed_formats: ["png", "jpg", "jpeg", "svg", "ico", "jfif", "webp"],
+      },
+      (err, result) => {
+        if (err) {
+          throw new CustomError.BadRequestError("Something went wrong!");
+        }
+
+        console.log("image uploaded to cloudinary");
+      }
+    );
+
+    const updateUser = await User.findOneAndUpdate(
+      { _id: req.user.userId },
+      { image: uploadedImage.public_id },
+      { new: true, runValidators: true }
+    );
+
+    updatedUser = updateUser;
+  } else {
+    const uploadedImage = await cloudinary.uploader.upload(
+      image,
+      {
+        upload_preset: "unsigned_upload",
+        allowed_formats: ["png", "jpg", "jpeg", "svg", "ico", "jfif", "webp"],
+      },
+      (err, result) => {
+        if (err) {
+          throw new CustomError.BadRequestError("Something went wrong!");
+        }
+
+        console.log("image uploaded to cloudinary");
+      }
+    );
+    const updateUser = await User.findOneAndUpdate(
+      { _id: req.user.userId },
+      { image: uploadedImage.public_id },
+      { new: true, runValidators: true }
+    );
+
+    updatedUser = updateUser;
+  }
+
+  const tokenUser = createTokenUser(updatedUser);
+  attachCookiesToResponse({ res, user: tokenUser });
+  res.status(StatusCodes.OK).json({ user: tokenUser });
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
   showCurrentUser,
   updateUser,
   updateUserPassword,
+  uploadImage,
 };
