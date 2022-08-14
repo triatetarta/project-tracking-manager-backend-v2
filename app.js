@@ -33,16 +33,19 @@ app.use(
   })
 );
 app.use(helmet());
-// app.use(
-//   cors({
-//     origin: ["http://localhost:3000"],
-//     methods: ["GET", "PUT", "POST", "DELETE"],
-//     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
-//     credentials: true,
-//     maxAge: 600,
-//     exposedHeaders: ["*", "Authorization"],
-//   })
-// );
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://luminous-cassata-6aa8a2.netlify.app",
+    ],
+    methods: ["GET", "PUT", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
+    credentials: true,
+    maxAge: 600,
+    exposedHeaders: ["*", "Authorization"],
+  })
+);
 app.use(xss());
 app.use(mongoSanitize());
 
